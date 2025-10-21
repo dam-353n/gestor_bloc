@@ -38,6 +38,14 @@ class _bodyHomeWidget extends StatelessWidget {
           onTap: () => context.push('/bloc-counter'),
         ),
         
+        ListTile(
+          title: Text('Register Screen'),
+          subtitle: Text('Navigate to the Register Screen'),
+          trailing: Icon(Icons.arrow_forward_ios_outlined),
+          onTap: () => context.push('/register'),
+        ),
+
+        
       ],
     );
   }
