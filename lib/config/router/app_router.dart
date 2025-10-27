@@ -17,5 +17,8 @@ final appRouter = GoRouter(
     GoRoute(path: '/register', builder: (context, state) {
       return const RegisterScreen();
     }),
+    GoRoute(path: '/login-dio', builder: (context, state) {
+      return const LoginDioScreen();
+    }),
   ],
 );

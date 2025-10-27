@@ -45,6 +45,12 @@ class _bodyHomeWidget extends StatelessWidget {
           onTap: () => context.push('/register'),
         ),
 
+        ListTile(
+          title: Text('Register Screen with dio'),
+          subtitle: Text('Navigate to the Login Screen with dio'),
+          trailing: Icon(Icons.arrow_forward_ios_outlined),
+          onTap: () => context.push('/login-dio'),
+        ),
         
       ],
     );
