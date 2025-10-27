@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gestor_bloc/presentation/blocs/register/register_cubit.dart';
+import 'package:gestor_bloc/presentation/widgets/inputs/custom_text_form_field.dart';
 
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
@@ -19,7 +22,7 @@ class RegisterScreen extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: _body(),
+      body: BlocProvider(create: (context) => RegisterCubit(), child: _body()),
     );
   }
 }
@@ -73,12 +76,18 @@ class _RegisterForm extends StatefulWidget {
 class _RegisterFormState extends State<_RegisterForm> {
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  String _email = '';
-  String _password = '';
-  String _username = '';
+  // String _email = '';
+  // String _password = '';
+  // String _username = '';
+
+
 
   @override
   Widget build(BuildContext context) {
+    final cubit = context.watch<RegisterCubit>();
+    String username = cubit.state.username;
+    final  email = cubit.state.email;
+    String password = cubit.state.password;
 
 
     return Form(
@@ -86,7 +95,10 @@ class _RegisterFormState extends State<_RegisterForm> {
       child: Column(
         children: [
           TextFormField(
-            onChanged: (value) => _username = value,
+            onChanged: (value){
+              cubit.updateUsername(value);
+              _formKey.currentState!.validate();
+            },
             validator: (value) {
               if (value == null || value.trim().isEmpty) {
                 return 'Por favor ingresa un nombre de usuario';
@@ -105,35 +117,14 @@ class _RegisterFormState extends State<_RegisterForm> {
           ),
           const SizedBox(height: 20),
 
-          TextFormField(
-            onChanged: (value) => _email = value,
-            validator: (value) {
-              if (value == null || value.trim().isEmpty) {
-                return 'Por favor ingresa un correo electrónico';
-              }
-              if ( value.trim().isEmpty ) return 'Campo requerido';
-              final emailRegExp = RegExp(
-                r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-              );
+          CustomTextFormField(hint: 'Correo electrónico',
+            onChanged: cubit.updateEmail,
+            errorMessage: email.errorMessage,),
 
-              if ( !emailRegExp.hasMatch(value) ) return 'No tiene formato de correo';
-
-              return null;
-            },
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.white,
-              hintText: 'Correo Electrónico',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide.none,
-              ),
-            ),
-          ),
           const SizedBox(height: 20),
 
           TextFormField(
-            onChanged: (value) => _password = value,
+            onChanged: (value) => cubit.updatePassword(value),
             obscureText: true,
             validator: (value) {
               if (value == null || value.trim().isEmpty) {
@@ -166,10 +157,7 @@ class _RegisterFormState extends State<_RegisterForm> {
                     ),
                   ),
                   onPressed: () {
-                    print('$_username - $_email - $_password');
-
-                    final isValid = _formKey.currentState!.validate();
-                    if ( !isValid ) return;
+                    cubit.onSubmit();
                     // Si el formulario es válido, puedes proceder con la creación de la cuenta
                     // Aquí puedes llamar a tu método de registro
 
